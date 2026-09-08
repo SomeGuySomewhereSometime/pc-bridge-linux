@@ -1,156 +1,157 @@
-# Guia do utilizador — Linux
+# Linux installation guide
 
-## 1. Preparar o computador
+## 1. Prepare your computer
 
-Use Linux nativo e um terminal da sua sessão de utilizador. Confirme:
+Use native Linux and a terminal in your normal user session. Check:
 
 ```sh
 python3 --version
 echo "$XDG_SESSION_TYPE"
 ```
 
-Python tem de ser 3.12 ou superior. A sessão gráfica pode ser `wayland` ou `x11`.
-A Bridge funciona sem desktop para ficheiros/comandos; capturas exigem sessão gráfica.
-Windows, macOS e WSL não são alvos deste pacote.
+Python must be 3.12 or newer. Graphical sessions may use `wayland` or `x11`.
+Files and commands work without a desktop; screenshots require an active graphical
+session. Windows, macOS, and WSL are not supported by this package.
 
-Em Ubuntu/Debian, instale os requisitos do sistema:
+On Ubuntu/Debian, install the system dependencies:
 
 ```sh
 sudo apt install python3 python3-venv git bubblewrap
 ```
 
-A distribuição tem de disponibilizar Python 3.12+. Instale o pacote venv da versão
-Python que está a utilizar. Noutras distribuições use os pacotes equivalentes;
-esta base espera os utilitários Linux em `/usr/bin`.
+Your distribution must provide Python 3.12+. Install the venv package matching
+your Python version. On other distributions, use equivalent packages; this codebase
+expects Linux utilities under `/usr/bin`.
 
-Para capturas Wayland:
+For Wayland screenshots:
 
 ```sh
 sudo apt install python3-dbus python3-gi xdg-desktop-portal
 ```
 
-É também necessário o backend do seu desktop: por exemplo,
-`xdg-desktop-portal-gnome` no GNOME ou `xdg-desktop-portal-kde` no KDE. Use apenas o
-apropriado. O helper de captura usa `/usr/bin/python3` e os módulos do sistema.
-Para X11, precisa de `libx11-6` e das variáveis `DISPLAY`/`XAUTHORITY` da sessão.
+You also need your desktop's portal backend, such as `xdg-desktop-portal-gnome`
+for GNOME or `xdg-desktop-portal-kde` for KDE. Install the appropriate backend.
+The screenshot helper uses `/usr/bin/python3` and its system modules.
+For X11, you need `libx11-6` and valid session `DISPLAY`/`XAUTHORITY` settings.
 
-## 2. Extrair e instalar
+## 2. Get the source and install
 
-Extraia `PCBridgeLinux.tar.gz` com o gestor de arquivos para uma pasta permanente,
-por exemplo `~/Aplicacoes/PCBridgeLinux`. Em alternativa, obtenha o código com:
+Clone into a permanent location owned by your user:
 
 ```sh
 git clone https://github.com/SomeGuySomewhereSometime/pc-bridge-linux.git PCBridgeLinux
 cd PCBridgeLinux
 ```
 
-Abra um terminal dentro da pasta que contém `install.sh` e execute:
+Alternatively, extract a distribution archive into a permanent folder, such as
+`~/Applications/PCBridgeLinux`, and open a terminal in the folder containing `install.sh`.
 
 ```sh
 sh install.sh --check
 sh install.sh --workspace "$HOME/PCBridgeLinuxProjects"
 ```
 
-Não use sudo no instalador. A pasta de projetos pode já conter os seus projetos,
-mas deve estar separada da instalação. Não use a pasta pessoal inteira nem `/`.
-Sem `--workspace`, o destino é `~/PCBridgeLinuxProjects`.
-O download Python requer acesso à Internet/PyPI (ou ao índice pip configurado).
+Do not run the installer with sudo. The projects folder may already contain your
+projects, but must be separate from the installation. Do not use your entire home
+directory or `/`. Without `--workspace`, the default is `~/PCBridgeLinuxProjects`.
+Python dependency downloads require access to PyPI or your configured pip index.
 
-Se também vai utilizar Blender, use:
+To include Blender MCP:
 
 ```sh
 sh install.sh --workspace "$HOME/PCBridgeLinuxProjects" --with-blender
 ```
 
-São criados nesta instalação:
+The installer creates:
 
-| Caminho | Conteúdo |
+| Path inside the installation | Purpose |
 |---|---|
-| `.venv/` | Python e dependências da Bridge |
-| `.venv-blender/` | Ambiente separado, apenas com `--with-blender` |
-| `bridge_config.json` | Pasta autorizada, política de ficheiros e aplicações |
-| `.local/` | Dados privados desta instalação |
-| `.local/mcp-client.json` | Exemplo MCP com os caminhos reais desta cópia |
+| `.venv/` | Bridge Python environment and dependencies |
+| `.venv-blender/` | Separate environment, only with `--with-blender` |
+| `bridge_config.json` | Authorized workspace, filesystem policy, and applications |
+| `.local/` | Private installation data |
+| `.local/mcp-client.json` | MCP example using this installation's absolute paths |
 
-A pasta de projetos é criada se não existir. O instalador verifica dependências
-Python e executa o diagnóstico. Não cria serviços, perfis de túnel ou contas.
-Uma interrupção pode deixar a venv parcial; corrija a causa e repita o mesmo comando.
+The projects folder is created if needed. Installation checks Python dependencies
+and runs diagnostics. It does not create services, tunnel profiles, or accounts.
+An interrupted installation may leave a partial venv: fix the cause and run the
+same command again.
 
-## 3. Verificar e ligar
+## 3. Verify and connect
 
 ```sh
 .venv/bin/python run_bridge.py doctor
 .venv/bin/python -B check.py
 ```
 
-O diagnóstico mostra requisitos e portas locais, não prova que um Editor está
-pronto. Os testes normais usam dados descartáveis; alguns testes de integração
-ficam omitidos. Para testar também o isolamento e o lançador systemd nesta máquina:
+Diagnostics report prerequisites and local ports; they do not establish editor
+readiness. Normal tests use disposable data and skip some host integration checks.
+To also test sandboxing and the systemd launcher on your computer:
 
 ```sh
 BRIDGE_SANDBOX_TESTS=1 BRIDGE_SYSTEMD_TESTS=1 .venv/bin/python -B check.py
 ```
 
-Esses testes criam processos e unidades temporárias de teste; não usam os seus editores.
-Para ligar o cliente, siga [MCP e ChatGPT](CHATGPT.md). Para os editores, siga
-[Unity e Blender](EDITORS.md). A Bridge disponibiliza 20 ferramentas MCP.
+These checks create temporary test processes and service units, not editor sessions.
+Follow [MCP clients and ChatGPT](CHATGPT.md) to connect a client, and
+[Unity and Blender](EDITORS.md) for editor setup. The Bridge exposes 20 MCP tools.
 
-## 4. Configuração e utilização diária
+## 4. Configuration and daily use
 
-O cliente MCP inicia `run_bridge.py stdio` com o Python da `.venv`. Executá-lo
-sozinho num terminal pode ficar à espera: stdio precisa de um cliente MCP.
-Depois de alterar o JSON, reinicie apenas a ligação desta cópia.
+Your MCP client starts `run_bridge.py stdio` using the Python executable in `.venv`.
+Starting it by itself in a terminal may simply wait: stdio requires an MCP client.
+After editing the JSON configuration, restart only this installation's connection.
 
-Na primeira instalação pode registar aplicações:
+You can register applications during the first installation:
 
 ```sh
 sh install.sh --workspace "$HOME/PCBridgeLinuxProjects" \
   --blender /usr/bin/blender
 ```
 
-Use o caminho de um executável que exista no seu computador. Para Unity acrescente
-`--unity /caminho/Editor/Unity --unity-project /caminho/do/projeto`;
-o projeto deve estar dentro do workspace. Use aspas em caminhos com espaços.
+Use an executable that exists on your computer. For Unity, add
+`--unity /path/to/Editor/Unity --unity-project /path/to/project`.
+The Unity project must be inside the workspace. Quote paths containing spaces.
 
-Depois da instalação, edite `applications` em `bridge_config.json` manualmente.
-O instalador não substitui o JSON nem aplica novos argumentos de workspace/aplicações.
-Para Blender Snap ou lançadores especiais, abra o Editor manualmente ou configure
-explicitamente executável, argumentos fixos e identidade do processo.
-Não ative argumentos livres em shells ou interpretadores.
+After installation, edit `applications` in `bridge_config.json` manually. Re-running
+the installer preserves the JSON and ignores new workspace/application arguments.
+For Snap or special launchers, open the editor manually or explicitly configure the
+launcher, fixed arguments, and process identity. Do not enable arbitrary arguments
+for shells or interpreters.
 
-O workspace permite alterações aos projetos que contém. Guarde chaves e outros
-segredos fora dele ou acrescente os caminhos a `filesystem.denied_paths`.
-`workspace/.secrets` já fica bloqueado por defeito. Não partilhe `.local` nem o JSON
-pessoal ao distribuir o pacote.
+Files in the workspace can be modified. Keep secrets outside it, or add their paths
+to `filesystem.denied_paths`. `workspace/.secrets` is blocked by default.
+Do not include `.local` or your personal configuration when distributing the package.
 
-## 5. Resolver problemas
+## 5. Troubleshooting
 
-| Problema | Ação |
+| Problem | Action |
 |---|---|
-| Python antigo / falta venv ou ensurepip | Instalar Python 3.12+ e o pacote venv correspondente |
-| Falha pip ou download | Verificar rede/índice e repetir o comando; não há sucesso enquanto pip/doctor falharem |
-| Bubblewrap não cria sandbox | Executar num Linux nativo; verificar suporte a user namespaces e política da distribuição. Não desativar o isolamento |
-| `systemctl --user` indisponível | Usar a sessão normal do utilizador ou abrir editores manualmente |
-| Opções systemd não reconhecidas | O lançador usa `--expand-environment=no` e `ExitType=cgroup`; em systemd antigo abrir os editores manualmente |
-| Captura Wayland falha | Verificar portal/backend, dbus/gi do sistema e consentimento na sessão gráfica |
-| Captura X11 falha | Verificar sessão ativa, libX11 e DISPLAY/XAUTHORITY |
-| Porta de Editor não responde | Abrir o Editor e ativar o plugin/addon; rever a porta em `integrations` |
-| Cliente usa caminhos antigos | Se moveu a pasta, recriar as venvs e corrigir o JSON do cliente; prefira instalar logo no destino definitivo |
+| Old Python, missing venv/ensurepip | Install Python 3.12+ and its matching venv package |
+| pip/download failure | Check the network/index and retry; installation is incomplete until pip and doctor succeed |
+| Bubblewrap cannot create a sandbox | Use native Linux and check user namespaces and distribution policy; do not disable isolation |
+| `systemctl --user` unavailable | Use your normal user session or open editors manually |
+| Unsupported systemd options | The launcher uses `--expand-environment=no` and `ExitType=cgroup`; open editors manually on older versions |
+| Wayland screenshots fail | Check portal/backend, system dbus/gi modules, and desktop consent |
+| X11 screenshots fail | Check the active session, libX11, and DISPLAY/XAUTHORITY |
+| Editor port unreachable | Open the editor, enable its addon/plugin, and check the configured integration port |
+| Client still uses old paths | After moving the installation, recreate its venvs and update client paths; prefer installing in the final location |
 
-`--check` não instala nem cria configuração. `--configure-only` cria apenas a
-configuração e a pasta de projetos; não prova que dependências, sandbox ou MCP funcionam.
+`--check` verifies prerequisites without installing or creating configuration.
+`--configure-only` creates configuration and the projects folder only; it does not
+verify dependencies, sandbox execution, or MCP readiness.
 
-## 6. Repetir, atualizar e remover
+## 6. Reinstall, update, and remove
 
-Pode repetir o instalador na mesma pasta: mantém `bridge_config.json` e o exemplo
-MCP existente. Ao adicionar Blender mais tarde, acrescente a entrada do Blender ao
-cliente conforme [EDITORS.md](EDITORS.md). Para mudar de workspace edite o JSON.
+You can rerun the installer in the same folder. It preserves `bridge_config.json`
+and the existing MCP example. If you add Blender later, add its client entry as
+explained in [EDITORS.md](EDITORS.md). Edit the JSON to change the workspace.
 
-Para uma nova versão, extraia numa pasta nova, instale e teste antes de trocar a
-ligação no cliente. Conserve a pasta anterior até verificar o resultado.
+For a new version, install in a new folder and test before switching the client
+connection. Keep the previous installation until the replacement is verified.
 
-Para remover, desligue esta ligação no cliente MCP e pare apenas o túnel/perfil
-que criou para ela, se existir. Remova as respetivas entradas do cliente. Depois
-apague a pasta desta instalação com o gestor de ficheiros. A pasta de projetos
-fica separada: conserve-a. Addons ou serviços que tenha instalado manualmente
-precisam de ser removidos nas respetivas aplicações, se já não forem necessários.
+To remove this installation, disable its MCP client connection and stop only the
+tunnel/profile you created for it, if any. Remove its client entries, then delete
+the installation folder using your file manager. Keep the separate projects folder.
+Remove any addons or services you installed manually through their respective
+applications if you no longer need them.

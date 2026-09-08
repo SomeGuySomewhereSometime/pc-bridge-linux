@@ -1,4 +1,4 @@
-"""Instalador Linux por utilizador; instala apenas nesta pasta independente."""
+"""Per-user Linux installer; installs only in this independent directory."""
 import argparse
 import json
 import os
@@ -31,7 +31,7 @@ def build_config(workspace, blender=None, unity=None, unity_project=None):
     if workspace.is_relative_to(ROOT) or ROOT.is_relative_to(workspace):
         raise ValueError("Keep the workspace separate from the installation folder")
     if workspace.exists() and not workspace.is_dir():
-        raise ValueError("A pasta de projetos indicada é um ficheiro")
+        raise ValueError("The selected projects path is a file")
     private = ROOT / ".local"
     config = {"workspace": str(workspace), "filesystem": {
         "denied_paths": [str(private), str(workspace / ".secrets")],
@@ -43,7 +43,7 @@ def build_config(workspace, blender=None, unity=None, unity_project=None):
             continue
         exe = Path(executable).expanduser().resolve(strict=True)
         if not exe.is_file() or not os.access(exe, os.X_OK):
-            raise ValueError("A aplicação deve ser um ficheiro executável")
+            raise ValueError("The application must be an executable file")
         args = []
         if alias == "unity":
             if not unity_project:
@@ -71,13 +71,13 @@ def configure(workspace, blender=None, unity=None, unity_project=None):
 
 def require_linux():
     if platform.system() != "Linux":
-        raise ValueError("Este instalador suporta apenas Linux nativo")
+        raise ValueError("This installer supports native Linux only")
     if sys.version_info < (3, 12):
-        raise ValueError("É necessário Python 3.12 ou superior")
+        raise ValueError("Python 3.12 or newer is required")
     if os.geteuid() == 0:
-        raise ValueError("Execute como utilizador normal, sem sudo")
+        raise ValueError("Run as a regular user, without sudo")
     if "microsoft" in platform.release().lower():
-        raise ValueError("WSL não é suportado por este instalador de desktop Linux")
+        raise ValueError("WSL is not supported by this Linux desktop installer")
 
 
 def preflight():
@@ -85,25 +85,25 @@ def preflight():
     for binary in ("bwrap", "git", "grep", "bash", "ps", "env", "true"):
         path = Path("/usr/bin") / binary
         if not path.is_file() or not os.access(path, os.X_OK):
-            raise ValueError(f"Falta {path}. Consulte docs/INSTALL.md")
+            raise ValueError(f"Missing {path}. See docs/INSTALL.md")
     import ensurepip  # Fail before installation if the distro's venv support is missing.
     result = subprocess.run(["/usr/bin/bwrap", "--die-with-parent", "--unshare-all",
                              "--ro-bind", "/", "/", "--", "/usr/bin/true"],
                             capture_output=True, text=True, timeout=15)
     if result.returncode:
-        raise ValueError("Bubblewrap não consegue criar a sandbox. Consulte docs/INSTALL.md; "
-                         "a instalação não desativa o isolamento.")
+        raise ValueError("Bubblewrap cannot create a sandbox. See docs/INSTALL.md; "
+                         "the installer does not disable isolation.")
     result = subprocess.run(["/usr/bin/systemctl", "--user", "show-environment"],
                             capture_output=True, timeout=10) if Path("/usr/bin/systemctl").exists() else None
     if result is None or result.returncode:
-        print("Aviso: gestor systemd de utilizador indisponível; abra os editores manualmente.")
+        print("Warning: user systemd manager unavailable; open editors manually.")
     if os.environ.get("XDG_SESSION_TYPE") == "wayland":
         result = subprocess.run(["/usr/bin/python3", "-c", "import dbus; from gi.repository import GLib"],
                                 capture_output=True, timeout=10)
         if result.returncode:
-            print("Aviso: faltam python3-dbus/python3-gi para capturas Wayland; consulte o guia.")
+            print("Warning: python3-dbus/python3-gi missing for Wayland screenshots; see the guide.")
     elif not os.environ.get("DISPLAY"):
-        print("Aviso: sessão gráfica não detetada; capturas precisam de um desktop ativo.")
+        print("Warning: no graphical session detected; screenshots require an active desktop.")
 
 
 def export_client_config():
@@ -116,32 +116,32 @@ def export_client_config():
     if not path.exists():
         write_new(path, json.dumps({"mcpServers": servers}, indent=2) + "\n")
     else:
-        print(".local/mcp-client.json preservado; se adicionou Blender, consulte docs/EDITORS.md.")
+        print(".local/mcp-client.json preserved; if you added Blender, see docs/EDITORS.md.")
 
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workspace", type=Path, default=Path.home() / "PCBridgeLinuxProjects")
-    parser.add_argument("--blender", help="Caminho absoluto do executável Blender (opcional)")
-    parser.add_argument("--unity", help="Caminho absoluto do Unity Editor (opcional)")
+    parser.add_argument("--blender", help="Absolute Blender executable path (optional)")
+    parser.add_argument("--unity", help="Absolute Unity Editor executable path (optional)")
     parser.add_argument("--unity-project")
-    parser.add_argument("--with-blender", action="store_true", help="Instalar ambiente separado do Blender MCP")
-    parser.add_argument("--configure-only", action="store_true", help="Criar só configuração; não instalar dependências")
-    parser.add_argument("--check", action="store_true", help="Verificar requisitos sem instalar")
+    parser.add_argument("--with-blender", action="store_true", help="Install the separate Blender MCP environment")
+    parser.add_argument("--configure-only", action="store_true", help="Create configuration only; do not install dependencies")
+    parser.add_argument("--check", action="store_true", help="Check prerequisites without installing")
     args = parser.parse_args()
     try:
         require_linux()
         if args.check:
             preflight()
-            print("Requisitos básicos Linux verificados. Os avisos indicam capacidades opcionais em falta.")
+            print("Basic Linux prerequisites verified. Warnings indicate missing optional capabilities.")
             return
         config_path = ROOT / "bridge_config.json"
         if config_path.exists():
             config = json.loads(config_path.read_text(encoding="utf-8"))
             workspace = Path(config["workspace"])
             if not workspace.is_absolute() or not workspace.is_dir():
-                raise ValueError("A configuração existente não aponta para uma pasta de projetos válida")
-            print("Configuração existente preservada; argumentos de workspace/aplicações não aplicados.")
+                raise ValueError("Existing configuration does not point to a valid projects directory")
+            print("Existing configuration preserved; workspace/application arguments were not applied.")
         else:
             build_config(args.workspace, args.blender, args.unity, args.unity_project)
         if not args.configure_only:
@@ -158,15 +158,15 @@ def main():
             configure(args.workspace, args.blender, args.unity, args.unity_project)
         (ROOT / ".local").mkdir(mode=0o700, exist_ok=True)
         if args.configure_only:
-            print("Configuração criada/preservada. Dependências não instaladas.")
+            print("Configuration created/preserved. Dependencies were not installed.")
             return
         subprocess.run([str(python_in(ROOT / ".venv")), "-B", str(ROOT / "run_bridge.py"), "doctor"], check=True)
         export_client_config()
-        print("Instalação Linux concluída. Configuração MCP: .local/mcp-client.json")
-        print("Instruções: docs/INSTALL.md e docs/EDITORS.md")
+        print("Linux installation complete. MCP configuration: .local/mcp-client.json")
+        print("Instructions: docs/INSTALL.md and docs/EDITORS.md")
         print(shlex.join([str(python_in(ROOT / ".venv")), str(ROOT / "run_bridge.py"), "doctor"]))
     except (ValueError, KeyError, ImportError, OSError, subprocess.SubprocessError) as exc:
-        parser.exit(1, f"Erro: {exc}\nConsulte docs/INSTALL.md; pode repetir a instalação após corrigir o problema.\n")
+        parser.exit(1, f"Error: {exc}\nSee docs/INSTALL.md; retry installation after fixing the problem.\n")
 
 
 if __name__ == "__main__":
