@@ -1,0 +1,12 @@
+.venv*/
+__pycache__/
+*.pyc
+bridge_config.json
+workspace/
+.local/
+.env*
+*.log
+*.key
+*.pem
+
+*.tar.gz
