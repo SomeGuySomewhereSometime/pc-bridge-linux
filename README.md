@@ -4,6 +4,15 @@
 files, commands, and projects.** Includes a per-user installer and guides for
 connecting ChatGPT, Unity, and Blender.
 
+**Unity and Blender integrations are included; the editors themselves are not installed
+automatically.** Blender support includes the addon and an optional MCP server environment
+installed with `--with-blender`; you must install Blender and enable the addon manually.
+Unity support includes MCP setup instructions and a package configuration reference;
+you must install Unity and enable its MCP plugin in your project.
+See the [Unity and Blender setup guide](docs/EDITORS.md).
+
+By **SurveysGuy** · X: [@someguy_112358](https://x.com/someguy_112358)
+
 MCP (Model Context Protocol) lets an AI client discover and call the Bridge's
 tools. This project does not include an AI model. You need an MCP client and,
 for remote access from ChatGPT, your own account and tunnel connection.

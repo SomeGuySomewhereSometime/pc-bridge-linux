@@ -57,3 +57,10 @@ User requested English for the repository. Translated the README, installation,
 client/editor guides, validation notes, change log, installer help/errors, and GitHub
 description. Kept CLI options, dependency versions, permissions, and behavior unchanged.
 Regenerated the distribution archive and verified the installer/tests before publishing.
+
+## 2026-09-08 — Clarify editor integrations and add author profile
+
+Clarified at the top of the README that Unity and Blender integration support is
+included, while editor installation and plugin/addon activation remain manual.
+Added the author's supplied X identity: SurveysGuy, @someguy_112358, with a profile
+link. Documentation-only change; checked the diff and regenerated the archive.
