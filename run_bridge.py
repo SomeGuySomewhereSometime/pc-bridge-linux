@@ -14,7 +14,7 @@ def main():
     parser.add_argument("mode", choices=["stdio", "doctor"], nargs="?", default="stdio")
     args = parser.parse_args()
     if platform.system() != "Linux":
-        parser.error("Esta distribuição suporta apenas Linux")
+        parser.error("This distribution supports Linux only")
     config_path = Path(os.environ.get("BRIDGE_CONFIG", ROOT / "bridge_config.json")).resolve()
     config = json.loads(config_path.read_text(encoding="utf-8"))
     workspace = Path(config["workspace"]).expanduser()

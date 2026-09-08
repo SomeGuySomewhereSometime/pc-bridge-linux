@@ -17,7 +17,7 @@ for directory in ('docs', 'ops', '.github'):
 with tarfile.open(output, 'w:gz') as archive:
     for path in sorted(set(files)):
         if path.is_symlink():
-            raise SystemExit(f'Recusa empacotar symlink: {path}')
+            raise SystemExit(f'Refusing to package symlink: {path}')
         archive.add(path, arcname=str(Path('PCBridgeLinux') / path.relative_to(root)), recursive=False)
 digest = hashlib.sha256(output.read_bytes()).hexdigest()
 output.with_suffix(output.suffix + '.sha256').write_text(f'{digest}  {output.name}\n')

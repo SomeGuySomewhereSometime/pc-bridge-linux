@@ -1,33 +1,34 @@
-# Validação da variante Linux — 08-09-2026
+# Linux validation — 2026-09-08
 
-## Executado nesta tarefa
+## Verified locally
 
-- Instalação completa numa pasta temporária com espaços no nome, com venvs novas,
-  downloads das dependências fixadas e `--with-blender`: sucesso.
-- `pip check` passou nos ambientes da Bridge e do Blender.
-- `run_bridge.py doctor`: executado pelo instalador com sucesso.
-- Segunda execução do instalador: configuração preservada byte a byte; um novo
-  argumento de workspace foi ignorado e essa pasta não foi criada.
-- 49 testes passaram com Python 3.14 no Linux anfitrião, sem testes omitidos,
-  com `BRIDGE_SANDBOX_TESTS=1 BRIDGE_SYSTEMD_TESTS=1`.
-- Inclui sessão MCP stdio real, 20 ferramentas, recusa de leitura fora do workspace,
-  isolamento Bubblewrap, Git e sobrevivência de aplicação ao fim do seu lançador.
-- Inclui 9 testes novos do instalador: recusa de outros SOs/root/WSL, validação antes
-  de alterações, privacidade, preservação da configuração e caminhos com espaços.
-- Os 31 ficheiros da base original foram comparados por SHA-256: nenhum alterado.
+- Full installation in a temporary folder containing spaces, with fresh virtual
+  environments, pinned dependency downloads, and `--with-blender`: successful.
+- `pip check` passed in both the Bridge and Blender environments.
+- `run_bridge.py doctor` completed successfully through the installer.
+- Re-running the installer preserved configuration byte for byte. A new workspace
+  argument was ignored and that directory was not created.
+- All 49 tests passed on the Linux host using Python 3.14, with no skipped tests,
+  with `BRIDGE_SANDBOX_TESTS=1 BRIDGE_SYSTEMD_TESTS=1`.
+- Coverage includes a real MCP stdio session, 20 advertised tools, rejection of
+  reads outside the workspace, Bubblewrap isolation, Git, and application survival
+  after stopping its launcher.
+- Nine installer tests cover rejection of unsupported systems/root/WSL, validation
+  before changes, permissions, configuration preservation, and paths containing spaces.
+- SHA-256 comparison of the 31 original source files confirmed no changes to the base.
 
-A tentativa inicial dentro da sandbox da tarefa não podia criar namespaces
-Bubblewrap e teve timeout na inicialização MCP. A validação completa foi executada
-no anfitrião, mantendo o isolamento próprio da Bridge. Foram corrigidos dois testes
-novos que pressupunham uma pasta de instalação sem configuração prévia.
+The initial run inside the task sandbox could not create Bubblewrap namespaces and
+encountered an MCP initialization timeout. Full checks ran on the host, preserving
+the Bridge's own isolation. Two new tests were corrected because they incorrectly
+assumed the installation directory could not already contain configuration.
 
-## Ainda não validado
+## Not yet validated locally
 
-- Instalação em outras distribuições, Python 3.12 ou outras arquiteturas. A CI
-  incluída destina-se a Ubuntu/Python 3.12 e 3.14; não foi executada remotamente.
-- Captura gráfica real Wayland/X11 desta cópia (os testes verificam os adaptadores).
-- Uma nova conta/túnel ChatGPT, Unity em Play Mode ou addon Blender ligado a esta cópia.
-- Reinício do computador/login e arranque automático. O pacote não instala serviços.
+- Installation on other distributions, Python 3.12, or other architectures. The CI
+  workflow targets Ubuntu with Python 3.12 and 3.14; see GitHub Actions for current results.
+- Real Wayland/X11 screenshots from this copy; automated tests exercise the adapters.
+- A new ChatGPT account/tunnel, Unity Play Mode, or a Blender addon connected to this copy.
+- Reboot/login and automatic startup. This package does not install services.
 
-A instalação do ambiente Blender não prova a ligação ao Editor. Uma porta aberta
-não prova a identidade do projeto/cena nem o funcionamento das ferramentas.
+Installing Blender's Python environment does not verify an editor connection.
+An open port does not establish project/scene identity or working editor tools.

@@ -1,53 +1,54 @@
 # PC Bridge Linux
 
-**Ligue um cliente de inteligência artificial compatível com MCP ao seu computador Linux
-para trabalhar com ficheiros, comandos e projetos locais.** Inclui um instalador por
-utilizador e guias para integrar Unity, Blender e ChatGPT.
+**Connect an MCP-compatible AI client to your Linux computer to work with local
+files, commands, and projects.** Includes a per-user installer and guides for
+connecting ChatGPT, Unity, and Blender.
 
-MCP (Model Context Protocol) é o protocolo que permite ao cliente descobrir e chamar
-as ferramentas da Bridge. O projeto não inclui um modelo de IA: precisa de um cliente
-MCP e, para usar ChatGPT remotamente, de configurar a sua própria ligação/túnel.
+MCP (Model Context Protocol) lets an AI client discover and call the Bridge's
+tools. This project does not include an AI model. You need an MCP client and,
+for remote access from ChatGPT, your own account and tunnel connection.
 
-## O que faz
+## What it does
 
-- Disponibiliza **20 ferramentas MCP** para operações de ficheiros, pesquisa,
-  comandos, Git, diagnóstico do computador e gestão de aplicações autorizadas.
-- Executa shell, Git e patches com **Bubblewrap**, com acesso limitado ao workspace
-  e às regras de proteção configuradas, sem rede na sandbox dos comandos.
-- Inclui captura do ecrã para sessões Wayland ou X11, sujeita às permissões do desktop.
-- Prepara opcionalmente um ambiente Python separado para o **Blender MCP**, com addon incluído.
-- Documenta a configuração do **Unity MCP** no próprio projeto e a ligação dos três
-  servidores ao cliente. A Bridge, Unity e Blender mantêm responsabilidades separadas.
+- Provides **20 MCP tools** for files, search, shell commands, Git, system
+  diagnostics, screenshots, and authorized application management.
+- Runs shell, Git, and patch operations through **Bubblewrap**, constrained by
+  the configured workspace and filesystem policy, with networking disabled inside
+  the command sandbox.
+- Supports desktop screenshots through Wayland portals or X11, subject to desktop permissions.
+- Optionally installs a separate Python environment for **Blender MCP**, with its addon included.
+- Documents **Unity MCP** setup inside your project and how to connect all three
+  servers. The Bridge handles files and commands; the editors own their live state.
 
-## Porquê usar
+## Why use it?
 
-É útil quando quer que um assistente trabalhe nos seus projetos Linux através de
-ferramentas explícitas, sem copiar ficheiros e resultados de comandos a cada interação.
-Por exemplo: investigar um erro num projeto, editar ficheiros numa pasta autorizada,
-consultar o estado do Git ou combinar trabalho de código com ferramentas dos editores.
+Use it when you want an assistant to work on Linux projects through explicit tools,
+without repeatedly copying files and terminal output into a conversation. Examples
+include investigating a project error, editing files in an authorized folder,
+checking Git status, or combining code work with Unity and Blender tools.
 
-A instalação fica numa pasta independente, usa ambientes Python próprios e preserva
-a configuração quando volta a executar o instalador. Pode experimentar a integração
-sem substituir uma instalação anterior, com passos claros para diagnosticar e remover.
+The installer uses an independent directory and dedicated Python environments.
+It preserves existing configuration when run again, making it easier to try the
+integration alongside an existing setup and remove it later.
 
-O workspace é a pasta onde permite ao assistente trabalhar: as ferramentas podem
-alterar e apagar ficheiros dentro dela. Escolha os projetos que quer disponibilizar
-e configure os caminhos protegidos. O isolamento é uma fronteira de desenvolvimento,
-não uma garantia de contenção contra processos hostis da mesma conta local. Os MCPs
-dos editores têm as suas próprias permissões, incluindo execução de código no Editor.
+Your workspace is the folder you authorize the assistant to use. Its tools can
+modify and delete files there: choose the projects you want to expose and configure
+protected paths. The sandbox is a development boundary, not containment against
+hostile processes running under the same local account. Editor MCPs have their own
+permissions, including code execution inside the editor.
 
-## Compatibilidade
+## Compatibility
 
-**Testado em Ubuntu 26.04 LTS, Python 3.14.4 e systemd 259.** Outras distribuições
-Linux podem funcionar se cumprirem os requisitos, mas ainda não foram validadas.
-Requer Python 3.12+, venv, Git e Bubblewrap funcional. O lançamento de aplicações
-requer systemd de utilizador compatível; as capturas requerem uma sessão gráfica.
-Windows, macOS e WSL são recusados por este instalador.
+**Tested on Ubuntu 26.04 LTS with Python 3.14.4 and systemd 259.** Other Linux
+distributions may work if they meet the requirements, but have not been validated.
+Requires Python 3.12+, venv, Git, and working Bubblewrap. Application launching
+requires a compatible user systemd manager; screenshots require a graphical session.
+The installer rejects Windows, macOS, and WSL.
 
-## Começar
+## Quick start
 
-Num sistema Ubuntu/Debian com Python 3.12 ou superior, instale os requisitos
-e obtenha esta cópia numa pasta permanente do seu utilizador:
+On Ubuntu/Debian with Python 3.12 or newer, install the system dependencies and
+clone into a permanent directory owned by your user:
 
 ```sh
 sudo apt install python3 python3-venv git bubblewrap
@@ -58,38 +59,40 @@ sh install.sh --workspace "$HOME/PCBridgeLinuxProjects"
 .venv/bin/python run_bridge.py doctor
 ```
 
-O `sudo` é usado apenas pelo gestor de pacotes; execute o instalador sem sudo.
-Para incluir o ambiente Python do Blender, acrescente `--with-blender`.
-A instalação descarrega dependências Python e mantém as versões fixadas da base.
+Use `sudo` only for the system package manager, not for the installer.
+Add `--with-blender` to install the separate Blender MCP Python environment.
+Installation downloads the pinned Python dependencies inherited from the base project.
 
-**[Instruções completas para o utilizador](docs/INSTALL.md)** ·
-[Unity e Blender](docs/EDITORS.md) · [Cliente MCP e ChatGPT](docs/CHATGPT.md) ·
-[Validação e limitações](VALIDATION.md)
+**[Full installation guide](docs/INSTALL.md)** · [Unity and Blender](docs/EDITORS.md) ·
+[MCP clients and ChatGPT](docs/CHATGPT.md) · [Validation and limitations](VALIDATION.md)
 
-O instalador gera `.local/mcp-client.json` com caminhos absolutos para clientes que
-aceitam `mcpServers`. Não é preciso ativar a venv. A ligação à conta/túnel e a
-ativação de addons nos editores são passos manuais descritos nos guias.
+The installer generates `.local/mcp-client.json` with absolute paths for clients
+that accept `mcpServers`. You do not need to activate the virtual environment.
+Account/tunnel setup and editor addon activation are manual steps covered in the guides.
 
-## Âmbito
+## Scope
 
-- Linux nativo, Wayland ou X11. Windows, macOS e WSL são recusados no instalador.
-- Shell, Git e patches exigem Bubblewrap funcional; sem ele a instalação completa para.
-- Captura Wayland depende do portal e do consentimento da sessão gráfica; X11 usa MSS.
-- Lançar aplicações exige systemd de utilizador compatível; pode abrir os editores manualmente.
-- Configuração existente é preservada. A pasta de projetos é separada da instalação.
-- Não instala serviços nem altera contas, outros projetos ou instalações anteriores.
+- Native Linux, with Wayland or X11 for desktop features.
+- A working Bubblewrap sandbox is mandatory for a full installation.
+- Wayland screenshots depend on the desktop portal and user consent; X11 uses MSS.
+- Editors can be opened manually when compatible user systemd is unavailable.
+- Existing configuration is preserved. Projects are kept outside the installation directory.
+- The installer does not create services or change other installations, accounts, or projects.
 
-## Proveniência
+## Provenance and licensing
 
-Derivado da cópia local de PCBridgePortable em 08-09-2026. As alterações desta
-variante concentram-se no instalador, ponto de entrada, documentação e CI Linux.
-Os módulos partilhados mantêm adaptadores internos da base e respetivos testes;
-isso não representa suporte a Windows nesta distribuição.
-O addon Blender conserva a [licença MIT original](ops/vendor/blender-mcp/LICENSE).
-A base não define uma licença de redistribuição para o código da Bridge.
+Derived from the local PCBridgePortable source snapshot dated 2026-09-08. Changes
+focus on the Linux installer, entry point, documentation, and CI. Shared internal
+modules retain adapters and tests from the base; they do not imply Windows support
+in this distribution.
 
-## Empacotar
+The Blender addon retains its [original MIT license](ops/vendor/blender-mcp/LICENSE).
+The base project does not specify a redistribution license for the Bridge code;
+this repository does not add one.
 
-Execute `sh package.sh` para gerar `PCBridgeLinux.tar.gz` e o respetivo SHA-256 na
-pasta acima. O pacote inclui código, documentação e addon; exclui venvs, configuração
-pessoal, `.local` e histórico Git. Distribua esse pacote, não uma instalação configurada.
+## Build a distribution archive
+
+Run `sh package.sh` to create `PCBridgeLinux.tar.gz` and its SHA-256 file in the
+parent directory. The archive includes source, documentation, and the addon,
+while excluding virtual environments, personal configuration, `.local`, and Git history.
+Share that archive rather than a configured installation directory.

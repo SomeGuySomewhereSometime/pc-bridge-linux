@@ -1,75 +1,74 @@
-# Unity e Blender: preparação manual
+# Unity and Blender setup
 
-As versões abaixo são a referência da instalação de origem, lida a 8 de setembro
-de 2026. Não significam que todas as combinações de versões/sistemas foram testadas.
+These reference versions come from the source installation inspected on 2026-09-08.
+They do not imply that every combination has been tested.
 
-| Componente | Referência |
+| Component | Reference version |
 |---|---|
 | Unity Editor | 6000.6.0f1 |
 | AI Game Developer / Unity MCP | 0.90.0 |
-| GameDev MCP Server gerido pelo plugin | 9.2.5 |
+| GameDev MCP Server managed by the plugin | 9.2.5 |
 | Blender | 5.2.1 LTS |
-| Blender addon incluído | 1.6, protocolo 5 |
-| Blender MCP Python | 1.9.1, MCP SDK 1.30.0 |
-| Bridge Python MCP SDK | 2.2.0, ambiente separado |
+| Included Blender addon | 1.6, protocol 5 |
+| Blender MCP Python server | 1.9.1, MCP SDK 1.30.0 |
+| Bridge MCP SDK | 2.2.0, separate environment |
 
 ## Unity
 
-1. Instale Unity Hub e um Editor compatível com o seu projeto/SO. Consulte
-   `ProjectSettings/ProjectVersion.txt` de cada projeto; abrir numa versão diferente
-   pode fazer migração. Use uma cópia do projeto para testar a integração.
-2. Instale **AI Game Developer**. O [guia do autor](https://github.com/IvanMurzak/Unity-MCP/wiki/Installation-Guide)
-   descreve instalação por unitypackage, OpenUPM ou Package Manager. A documentação
-   indica Unity 2022.3 como mínimo, mas a referência desta cópia é Unity 6000.6.0f1.
-   Prefira um caminho do projeto sem espaços, conforme o guia do plugin.
-3. Para reproduzir a referência, registe OpenUPM com os scopes indicados em
-   `ops/config/unity/packages-mcp.json` e selecione `com.ivanmurzak.unity.mcp` 0.90.0.
-   O JSON é referência para mesclar, **não substitui** `Packages/manifest.json` nem
-   `packages-lock.json` de um projeto existente. As extensões são opcionais: Input
-   System, Animation, ProBuilder, Cinemachine, Navigation, Splines e Particle System;
-   ative apenas as necessárias e confira as dependências Unity resolvidas.
-4. Abra `Window > AI Game Developer`, aguarde compilação/download do servidor e confirme
-   ligação ativa. Mantenha `keepConnected`/`keepServerRunning` ativos se quiser continuidade.
-   A [configuração oficial](https://github.com/IvanMurzak/Unity-MCP/wiki/Configuration)
-   fica em `UserSettings/AI-Game-Developer-Config.json`. Anote o endereço/porto reais
-   do projeto; o servidor acompanha a versão do plugin, não o atualize isoladamente.
-5. Na lista de ferramentas, confirme pelo menos `scene-list-opened`,
-   `editor-application-get-state`, `console-get-logs`, `screenshot-game-view` e
-   `screenshot-scene-view`. Ferramentas instaladas ou skills geradas não provam que
-   estão enabled. Ative apenas as capacidades que quer disponibilizar.
-6. Configure o cliente MCP pela janela do plugin. Para túnel, use o endpoint HTTP
-   MCP local que a configuração efetiva indicar (transport `streamableHttp`, caminho
-   `/mcp` quando indicado). Não exponha um endpoint sem autenticação fora de loopback.
-7. Confirme por MCP: projeto correto, cenas abertas, estado do Editor e Console.
-   Para trabalho de gameplay, faça ainda Play Mode e inspeção da Game View; compilar
-   não basta. Teste só numa cena descartável e guarde o projeto conscientemente.
+1. Install Unity Hub and a Linux Editor compatible with your project. Check
+   `ProjectSettings/ProjectVersion.txt`: opening a project in another version can
+   migrate it. Test the integration on a project copy.
+2. Install **AI Game Developer** using the author's
+   [installation guide](https://github.com/IvanMurzak/Unity-MCP/wiki/Installation-Guide).
+   It covers unitypackage, OpenUPM, and Package Manager methods. The source guide
+   states Unity 2022.3 as a minimum; this copy's reference is Unity 6000.6.0f1.
+   Prefer a project path without spaces, as advised by the plugin guide.
+3. To reproduce the reference, use the OpenUPM scopes in
+   `ops/config/unity/packages-mcp.json` and select `com.ivanmurzak.unity.mcp` 0.90.0.
+   This JSON is a merge reference: do not replace an existing project's
+   `Packages/manifest.json` or lock file. Enable optional extensions only when needed
+   and inspect the dependencies Unity resolves.
+4. Open `Window > AI Game Developer`, wait for compilation/server download, and
+   confirm the connection. Enable `keepConnected`/`keepServerRunning` if desired.
+   The [official configuration guide](https://github.com/IvanMurzak/Unity-MCP/wiki/Configuration)
+   describes `UserSettings/AI-Game-Developer-Config.json`. Record the project's actual
+   address and port. Keep the managed server version aligned with its plugin.
+5. Check that tools such as `scene-list-opened`, `editor-application-get-state`,
+   `console-get-logs`, `screenshot-game-view`, and `screenshot-scene-view` are enabled.
+   Installed tools or generated skills do not prove a tool is enabled.
+6. Configure the client using the plugin window. For tunneling, use the local MCP
+   endpoint reported by the effective configuration (`streamableHttp`, with `/mcp`
+   when indicated). Keep unauthenticated endpoints on loopback.
+7. Verify the project identity, open scenes, and Console through MCP. For gameplay
+   work, also test Play Mode and inspect Game View. Compilation alone is insufficient.
+   Use a disposable scene and deliberately choose when to save.
 
-O Unity precisa de licença/ativação e módulos de build escolhidos no Hub pelo utilizador.
-O instalador desta Bridge não resolve licenças, migra projetos ou ativa ferramentas.
+Unity licensing, activation, and build modules are managed by the user through Hub.
+The Bridge installer does not activate licenses, migrate projects, or enable editor tools.
 
 ## Blender
 
-1. Instale Blender para Linux. Execute `--with-blender` no instalador desta cópia;
-   cria `.venv-blender` com dependências próprias. Não misture MCP 1.x do Blender com
-   MCP 2.x da Bridge.
-2. Em Blender, `Edit > Preferences > Add-ons`, use **Install from Disk** (ou **Install**,
-   conforme a versão) e selecione `ops/vendor/blender-mcp/blender_mcp.py`. Ative
-   **MCP for Blender** e guarde as preferências. Esta cópia inclui o addon correspondente
-   à referência; não descarregue silenciosamente um addon diferente do servidor.
-3. Na viewport 3D, prima `N`, abra **MCP for Blender** e inicie o servidor. Confirme
-   loopback `127.0.0.1`, porta `9876` e ausência de erros. O [guia do autor](https://github.com/ahujasid/blender-mcp)
-   descreve a instalação e o painel. Se optar por auto-start, guarde essa opção e
-   teste uma reabertura: pode depender da cena/preferências.
-4. Recursos externos como Sketchfab, Poly Haven e geração 3D são opcionais e podem
-   exigir contas/chaves próprias. Não são necessários para ler a cena ou executar
-   código Blender. O wrapper desativa telemetria do servidor; reveja também o
-   consentimento do addon nas preferências.
-5. Configure o cliente/túnel stdio com o Python da `.venv-blender` e argumento absoluto
-   `ops/blender_entry.py`. O Python está em `.venv-blender/bin/python`. Mantenha Blender aberto com o addon ativo. Não lance o servidor Python
-   dentro da consola Python do Blender.
-6. Peça `get_context`, `get_scene_objects` e uma captura da viewport. Confirme nome da
-   cena, ficheiro e objetos antes de editar. Não confunda processo/túnel ativo com addon
-   ligado. Use ficheiros de teste e confirme visualmente quaisquer alterações.
+1. Install Blender for Linux. Run this package's installer with `--with-blender` to
+   create `.venv-blender`. Keep its MCP 1.x dependencies separate from the Bridge's MCP 2.x.
+2. In `Edit > Preferences > Add-ons`, choose **Install from Disk** (or **Install**,
+   depending on the version), select `ops/vendor/blender-mcp/blender_mcp.py`, enable
+   **MCP for Blender**, and save preferences. Use the included matching addon.
+3. In the 3D viewport, press `N`, open **MCP for Blender**, and start its server.
+   Confirm loopback `127.0.0.1`, port `9876`, and no errors. See the
+   [author's guide](https://github.com/ahujasid/blender-mcp) for the addon panel.
+   If you enable auto-start, save the setting and test reopening Blender.
+4. External resources such as Sketchfab, Poly Haven, and 3D generation are optional
+   and may need separate accounts or keys. They are unnecessary for reading scenes
+   or running Blender code. The Python wrapper disables server telemetry; also
+   review the addon's consent settings.
+5. Configure a stdio client using the absolute path to `.venv-blender/bin/python`
+   and the absolute script argument `ops/blender_entry.py`. Keep Blender open with
+   the addon running. Do not start the server inside Blender's Python console.
+   If you installed Blender support later, add this entry to your MCP client manually;
+   the installer preserves an existing `.local/mcp-client.json`.
+6. Request `get_context`, `get_scene_objects`, and a viewport screenshot. Confirm
+   scene, file, and object identity before editing. Test changes in disposable files
+   and verify them visually in Blender.
 
-O addon permite executar Python com as permissões do utilizador. O consentimento de
-scripts/addon é manual; não desative globalmente proteções do Blender para contornar erros.
+The addon can execute Python with your user account's permissions. Addon/script
+consent is manual; do not disable Blender's protections globally to bypass errors.
