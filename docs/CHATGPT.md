@@ -1,5 +1,17 @@
 # Connect MCP clients and ChatGPT
 
+## Use it from ChatGPT chat
+
+**Talk to ChatGPT and let it use your Linux PC through MCP. No Codex task is
+required for this connection.** Enable the Bridge in your ChatGPT conversation;
+ChatGPT calls its local tools to work with files, commands, Git, and connected editors.
+
+The Bridge is a tool server: it does not start a Codex coding session or include
+an AI model. Usage is determined by the ChatGPT mode and plan you use. In particular,
+**ChatGPT Work shares usage limits and credits with Codex**, so this project does
+not promise that every ChatGPT mode is outside your Codex allowance. See
+[OpenAI's current usage and pricing documentation](https://learn.chatgpt.com/docs/pricing).
+
 ## Verify locally first
 
 Run `run_bridge.py doctor` using the Python executable in `.venv`. For a local MCP

@@ -1,8 +1,8 @@
 # PC Bridge Linux
 
-**Connect an MCP-compatible AI client to your Linux computer to work with local
-files, commands, and projects.** Includes a per-user installer and guides for
-connecting ChatGPT, Unity, and Blender.
+**Use your Linux PC directly from a ChatGPT conversation through MCP.**
+Work with local files, commands, Git, Unity, and Blender from the chat. Includes
+a per-user installer; other MCP-compatible clients are also supported.
 
 **Unity and Blender integrations are included; the editors themselves are not installed
 automatically.** Blender support includes the addon and an optional MCP server environment
@@ -16,6 +16,18 @@ By **SurveysGuy** · X: [@someguy_112358](https://x.com/someguy_112358)
 MCP (Model Context Protocol) lets an AI client discover and call the Bridge's
 tools. This project does not include an AI model. You need an MCP client and,
 for remote access from ChatGPT, your own account and tunnel connection.
+
+## Use it from ChatGPT chat
+
+**Talk to ChatGPT and let it use your Linux PC through MCP. No Codex task is
+required for this connection.** Enable the Bridge in your ChatGPT conversation;
+ChatGPT calls its local tools to work with files, commands, Git, and connected editors.
+
+The Bridge is a tool server: it does not start a Codex coding session or include
+an AI model. Usage is determined by the ChatGPT mode and plan you use. In particular,
+**ChatGPT Work shares usage limits and credits with Codex**, so this project does
+not promise that every ChatGPT mode is outside your Codex allowance. See
+[OpenAI's current usage and pricing documentation](https://learn.chatgpt.com/docs/pricing).
 
 ## What it does
 
